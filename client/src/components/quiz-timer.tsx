@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Clock } from "lucide-react";
 
 interface QuizTimerProps {
@@ -8,25 +8,44 @@ interface QuizTimerProps {
 
 export function QuizTimer({ initialTime, onTimeExpiry }: QuizTimerProps) {
   const [timeRemaining, setTimeRemaining] = useState(initialTime);
+  const hasExpired = useRef(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (timeRemaining <= 0) {
-      onTimeExpiry();
+    setTimeRemaining(initialTime);
+    hasExpired.current = false;
+  }, [initialTime]);
+
+  useEffect(() => {
+    // Clear any existing timer
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+
+    // Don't start timer if already expired or time is 0
+    if (hasExpired.current || timeRemaining <= 0) {
       return;
     }
 
-    const timer = setInterval(() => {
+    timerRef.current = setInterval(() => {
       setTimeRemaining(prev => {
         if (prev <= 1) {
-          onTimeExpiry();
+          if (!hasExpired.current) {
+            hasExpired.current = true;
+            onTimeExpiry();
+          }
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
 
-    return () => clearInterval(timer);
-  }, [timeRemaining, onTimeExpiry]);
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, [initialTime]); // Only depend on initialTime, not timeRemaining
 
   const minutes = Math.floor(timeRemaining / 60);
   const seconds = timeRemaining % 60;
@@ -37,21 +56,21 @@ export function QuizTimer({ initialTime, onTimeExpiry }: QuizTimerProps) {
 
   return (
     <div className={`flex items-center space-x-2 px-4 py-2 rounded-lg ${
-      isCritical 
+      isCritical
         ? 'bg-warning-red bg-opacity-20 animate-pulse'
         : isWarning
         ? 'bg-accent-yellow bg-opacity-20'
         : 'bg-google-blue bg-opacity-10'
     }`}>
       <Clock className={`w-5 h-5 ${
-        isCritical 
+        isCritical
           ? 'text-warning-red'
           : isWarning
           ? 'text-accent-yellow'
           : 'text-google-blue'
       }`} />
       <span className={`font-mono text-lg font-bold ${
-        isCritical 
+        isCritical
           ? 'text-warning-red'
           : isWarning
           ? 'text-accent-yellow'

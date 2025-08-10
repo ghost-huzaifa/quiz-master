@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizMaster - Educational Quiz Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'google-blue': '#4285F4',
+                        'success-green': '#34A853',
+                        'bg-light': '#F8F9FA',
+                        'text-dark': '#202124',
+                        'warning-red': '#EA4335',
+                        'accent-yellow': '#FBBC04'
+                    },
+                    fontFamily: {
+                        'roboto': ['Roboto', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+<body class="font-roboto bg-bg-light text-text-dark">
+
+    <!-- @COMPONENT: NavigationHeader -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold text-google-blue">QuizMaster</h1>
+                    </div>
+                    <nav class="hidden md:block ml-10">
+                        <div class="flex items-baseline space-x-4">
+                            <a href="#dashboard" class="text-google-blue border-b-2 border-google-blue px-3 py-2 text-sm font-medium">Dashboard</a>
+                            <a href="#quizzes" class="text-gray-500 hover:text-text-dark px-3 py-2 text-sm font-medium">My Quizzes</a>
+                            <a href="#create" class="text-gray-500 hover:text-text-dark px-3 py-2 text-sm font-medium">Create Quiz</a>
+                        </div>
+                    </nav>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm text-gray-600">Teacher</span>
+                        <div class="w-8 h-8 bg-google-blue rounded-full flex items-center justify-center">
+                            <span class="text-white text-sm font-medium">JD</span>
+                        </div>
+                    </div>
+                    <button class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- @END_COMPONENT: NavigationHeader -->
+
+    <!-- Teacher Dashboard View -->
+    <div id="teacher-dashboard" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- @COMPONENT: DashboardStats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+                <div class="flex items-center">
+                    <div class="p-2 bg-google-blue bg-opacity-10 rounded-md">
+                        <i class="fas fa-clipboard-list text-google-blue text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Total Quizzes</p>
+                        <p class="text-2xl font-bold text-text-dark" data-bind="stats.totalQuizzes">24</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+                <div class="flex items-center">
+                    <div class="p-2 bg-success-green bg-opacity-10 rounded-md">
+                        <i class="fas fa-users text-success-green text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Active Students</p>
+                        <p class="text-2xl font-bold text-text-dark" data-bind="stats.activeStudents">156</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+                <div class="flex items-center">
+                    <div class="p-2 bg-accent-yellow bg-opacity-10 rounded-md">
+                        <i class="fas fa-chart-line text-accent-yellow text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Avg. Score</p>
+                        <p class="text-2xl font-bold text-text-dark" data-bind="stats.averageScore">87%</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+                <div class="flex items-center">
+                    <div class="p-2 bg-warning-red bg-opacity-10 rounded-md">
+                        <i class="fas fa-clock text-warning-red text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Pending Reviews</p>
+                        <p class="text-2xl font-bold text-text-dark" data-bind="stats.pendingReviews">8</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: DashboardStats -->
+
+        <!-- @COMPONENT: QuickActions -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+            <h2 class="text-lg font-semibold text-text-dark mb-4">Quick Actions</h2>
+            <div class="flex flex-wrap gap-4">
+                <button class="bg-google-blue text-white px-6 py-3 rounded-md font-medium hover:bg-blue-600 transition-colors flex items-center">
+                    <i class="fas fa-plus mr-2"></i>
+                    Create New Quiz
+                </button>
+                <button class="bg-white text-google-blue border border-google-blue px-6 py-3 rounded-md font-medium hover:bg-blue-50 transition-colors flex items-center">
+                    <i class="fas fa-download mr-2"></i>
+                    Export Results
+                </button>
+                <button class="bg-white text-gray-600 border border-gray-300 px-6 py-3 rounded-md font-medium hover:bg-gray-50 transition-colors flex items-center">
+                    <i class="fas fa-users mr-2"></i>
+                    Manage Students
+                </button>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: QuickActions -->
+
+        <!-- @COMPONENT: RecentQuizzes -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-text-dark">Recent Quizzes</h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quiz Name</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Attempts</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg Score</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <!-- @MAP: quizzes.map(quiz => ( -->
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-text-dark" data-bind="quiz.name">Introduction to Algebra</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-500" data-bind="quiz.subject">Mathematics</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-500" data-bind="quiz.duration">30 min</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-500" data-bind="quiz.attempts">42</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-500" data-bind="quiz.avgScore">85%</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 py-1 text-xs font-medium bg-success-green bg-opacity-10 text-success-green rounded-full" data-bind="quiz.status">Active</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button class="text-google-blue hover:text-blue-800 mr-3">View</button>
+                                <button class="text-gray-600 hover:text-gray-800 mr-3">Edit</button>
+                                <button class="text-warning-red hover:text-red-800">Delete</button>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-text-dark">World War II History</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-500">History</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-500">45 min</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-500">28</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-500">92%</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 py-1 text-xs font-medium bg-accent-yellow bg-opacity-10 text-orange-600 rounded-full">Draft</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button class="text-google-blue hover:text-blue-800 mr-3">View</button>
+                                <button class="text-gray-600 hover:text-gray-800 mr-3">Edit</button>
+                                <button class="text-warning-red hover:text-red-800">Delete</button>
+                            </td>
+                        </tr>
+                        <!-- @END_MAP )) -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: RecentQuizzes -->
+    </div>
+
+    <!-- Quiz Creation Interface -->
+    <div id="quiz-creation" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8" style="display: none;">
+        <!-- @COMPONENT: QuizCreationForm -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h2 class="text-xl font-semibold text-text-dark">Create New Quiz</h2>
+                <p class="text-sm text-gray-600 mt-1">Design engaging multiple-choice questions for your students</p>
+            </div>
+            
+            <div class="p-6">
+                <!-- Quiz Basic Info -->
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Quiz Title *</label>
+                            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-google-blue focus:border-transparent" placeholder="Enter quiz title" data-mock="true">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-google-blue focus:border-transparent" data-mock="true">
+                                <option>Select Subject</option>
+                                <option>Mathematics</option>
+                                <option>Science</option>
+                                <option>History</option>
+                                <option>English</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Duration (minutes) *</label>
+                            <input type="number" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-google-blue focus:border-transparent" placeholder="30" data-mock="true">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Total Questions</label>
+                            <input type="number" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-google-blue focus:border-transparent" placeholder="10" data-mock="true">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Pass Score (%)</label>
+                            <input type="number" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-google-blue focus:border-transparent" placeholder="70" data-mock="true">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                        <textarea rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-google-blue focus:border-transparent" placeholder="Brief description of the quiz..." data-mock="true"></textarea>
+                    </div>
+                </div>
+
+                <!-- Question Builder -->
+                <div class="mt-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-medium text-text-dark">Questions</h3>
+                        <button class="bg-google-blue text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-600 transition-colors flex items-center">
+                            <i class="fas fa-plus mr-2"></i>
+                            Add Question
+                        </button>
+                    </div>
+                    
+                    <!-- Sample Question -->
+                    <div class="border border-gray-200 rounded-lg p-6 mb-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-sm font-medium text-gray-500">Question 1</span>
+                            <button class="text-warning-red hover:text-red-700">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Question Text *</label>
+                                <textarea rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-google-blue focus:border-transparent" placeholder="Enter your question here..." data-mock="true">What is the capital of France?</textarea>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Answer Options</label>
+                                <div class="space-y-3">
+                                    <div class="flex items-center space-x-3">
+                                        <input type="radio" name="correct-answer-1" class="text-google-blue focus:ring-google-blue" data-mock="true">
+                                        <input type="text" class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-google-blue focus:border-transparent" placeholder="Option A" value="Paris" data-mock="true">
+                                        <button class="text-gray-400 hover:text-gray-600">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <input type="radio" name="correct-answer-1" class="text-google-blue focus:ring-google-blue" data-mock="true">
+                                        <input type="text" class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-google-blue focus:border-transparent" placeholder="Option B" value="London" data-mock="true">
+                                        <button class="text-gray-400 hover:text-gray-600">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <input type="radio" name="correct-answer-1" class="text-google-blue focus:ring-google-blue" data-mock="true">
+                                        <input type="text" class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-google-blue focus:border-transparent" placeholder="Option C" value="Berlin" data-mock="true">
+                                        <button class="text-gray-400 hover:text-gray-600">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <input type="radio" name="correct-answer-1" class="text-google-blue focus:ring-google-blue" data-mock="true">
+                                        <input type="text" class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-google-blue focus:border-transparent" placeholder="Option D" value="Madrid" data-mock="true">
+                                        <button class="text-gray-400 hover:text-gray-600">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <button class="mt-2 text-google-blue text-sm hover:text-blue-600 flex items-center">
+                                    <i class="fas fa-plus mr-1"></i>
+                                    Add Option
+                                </button>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Points</label>
+                                    <input type="number" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-google-blue focus:border-transparent" value="1" data-mock="true">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Difficulty</label>
+                                    <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-google-blue focus:border-transparent" data-mock="true">
+                                        <option>Easy</option>
+                                        <option>Medium</option>
+                                        <option>Hard</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex items-center justify-between pt-6 border-t border-gray-200">
+                    <button class="text-gray-600 hover:text-gray-800 font-medium">Cancel</button>
+                    <div class="flex space-x-3">
+                        <button class="bg-white text-google-blue border border-google-blue px-6 py-2 rounded-md font-medium hover:bg-blue-50 transition-colors">Save as Draft</button>
+                        <button class="bg-google-blue text-white px-6 py-2 rounded-md font-medium hover:bg-blue-600 transition-colors" data-event="click:handlePublishQuiz">Publish Quiz</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: QuizCreationForm -->
+    </div>
+
+    <!-- Student Quiz Taking Interface -->
+    <div id="student-quiz" class="min-h-screen bg-bg-light" style="display: none;">
+        <!-- @COMPONENT: QuizHeader -->
+        <div class="bg-white border-b border-gray-200 sticky top-0 z-50">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div>
+                        <h1 class="text-lg font-semibold text-text-dark" data-bind="quiz.title">Introduction to Algebra</h1>
+                        <p class="text-sm text-gray-500" data-bind="quiz.subject">Mathematics • 10 Questions</p>
+                    </div>
+                    <div class="flex items-center space-x-6">
+                        <!-- @COMPONENT: Timer -->
+                        <div class="flex items-center bg-warning-red bg-opacity-10 px-4 py-2 rounded-lg">
+                            <i class="fas fa-clock text-warning-red mr-2"></i>
+                            <span class="font-mono text-lg font-semibold text-warning-red" data-bind="timer.remaining">23:45</span>
+                        </div>
+                        <!-- @END_COMPONENT: Timer -->
+                        <button class="text-gray-600 hover:text-gray-800" data-event="click:handleSubmitQuiz">
+                            <i class="fas fa-flag mr-1"></i>
+                            Submit
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: QuizHeader -->
+
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- @COMPONENT: ProgressIndicator -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-sm font-medium text-gray-700">Question <span data-bind="currentQuestion">3</span> of <span data-bind="totalQuestions">10</span></span>
+                    <span class="text-sm text-gray-500">30% Complete</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-google-blue h-2 rounded-full transition-all duration-300" style="width: 30%" data-bind="progressPercentage"></div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: ProgressIndicator -->
+
+            <!-- @COMPONENT: QuestionCard -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-6">
+                <div class="mb-6">
+                    <h2 class="text-xl font-medium text-text-dark mb-2" data-bind="currentQuestion.text">
+                        Solve for x: 2x + 5 = 15
+                    </h2>
+                    <p class="text-sm text-gray-500">Select the correct answer below</p>
+                </div>
+
+                <!-- @STATE: selectedAnswer:string = null -->
+                <div class="space-y-4">
+                    <!-- @MAP: question.options.map((option, index) => ( -->
+                    <label class="flex items-start space-x-4 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                        <input type="radio" name="answer" value="A" class="mt-1 text-google-blue focus:ring-google-blue" data-bind="selectedAnswer" data-mock="true">
+                        <div class="flex-1">
+                            <div class="flex items-center">
+                                <span class="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center text-sm font-medium text-gray-600 mr-3">A</span>
+                                <span class="text-text-dark" data-bind="option.text">x = 5</span>
+                            </div>
+                        </div>
+                    </label>
+                    <label class="flex items-start space-x-4 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                        <input type="radio" name="answer" value="B" class="mt-1 text-google-blue focus:ring-google-blue" data-mock="true">
+                        <div class="flex-1">
+                            <div class="flex items-center">
+                                <span class="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center text-sm font-medium text-gray-600 mr-3">B</span>
+                                <span class="text-text-dark">x = 10</span>
+                            </div>
+                        </div>
+                    </label>
+                    <label class="flex items-start space-x-4 p-4 border border-google-blue rounded-lg cursor-pointer bg-blue-50 transition-colors">
+                        <input type="radio" name="answer" value="C" class="mt-1 text-google-blue focus:ring-google-blue" checked data-mock="true">
+                        <div class="flex-1">
+                            <div class="flex items-center">
+                                <span class="w-6 h-6 bg-google-blue rounded-full flex items-center justify-center text-sm font-medium text-white mr-3">C</span>
+                                <span class="text-text-dark">x = 5</span>
+                            </div>
+                        </div>
+                    </label>
+                    <label class="flex items-start space-x-4 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                        <input type="radio" name="answer" value="D" class="mt-1 text-google-blue focus:ring-google-blue" data-mock="true">
+                        <div class="flex-1">
+                            <div class="flex items-center">
+                                <span class="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center text-sm font-medium text-gray-600 mr-3">D</span>
+                                <span class="text-text-dark">x = 7.5</span>
+                            </div>
+                        </div>
+                    </label>
+                    <!-- @END_MAP )) -->
+                </div>
+            </div>
+            <!-- @END_COMPONENT: QuestionCard -->
+
+            <!-- @COMPONENT: QuizNavigation -->
+            <div class="flex items-center justify-between">
+                <button class="flex items-center px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors" data-event="click:handlePreviousQuestion">
+                    <i class="fas fa-chevron-left mr-2"></i>
+                    Previous
+                </button>
+                
+                <div class="flex items-center space-x-2">
+                    <!-- Question Navigator -->
+                    <div class="hidden md:flex items-center space-x-1">
+                        <!-- @MAP: questions.map((_, index) => ( -->
+                        <button class="w-8 h-8 rounded-full border border-gray-300 text-sm hover:bg-gray-50 transition-colors" data-bind="questionNavigation">1</button>
+                        <button class="w-8 h-8 rounded-full border border-gray-300 text-sm hover:bg-gray-50 transition-colors">2</button>
+                        <button class="w-8 h-8 rounded-full bg-google-blue text-white text-sm">3</button>
+                        <button class="w-8 h-8 rounded-full border border-gray-300 text-sm hover:bg-gray-50 transition-colors">4</button>
+                        <button class="w-8 h-8 rounded-full border border-gray-300 text-sm hover:bg-gray-50 transition-colors">5</button>
+                        <span class="text-gray-400">...</span>
+                        <button class="w-8 h-8 rounded-full border border-gray-300 text-sm hover:bg-gray-50 transition-colors">10</button>
+                        <!-- @END_MAP )) -->
+                    </div>
+                </div>
+
+                <button class="flex items-center px-4 py-2 bg-google-blue text-white rounded-md hover:bg-blue-600 transition-colors" data-event="click:handleNextQuestion">
+                    Next
+                    <i class="fas fa-chevron-right ml-2"></i>
+                </button>
+            </div>
+            <!-- @END_COMPONENT: QuizNavigation -->
+        </div>
+    </div>
+
+    <!-- Student Results View -->
+    <div id="student-results" class="min-h-screen bg-bg-light" style="display: none;">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- @COMPONENT: ResultsHeader -->
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-success-green bg-opacity-10 rounded-full mb-4">
+                    <i class="fas fa-check text-success-green text-2xl"></i>
+                </div>
+                <h1 class="text-3xl font-bold text-text-dark mb-2">Quiz Completed!</h1>
+                <p class="text-gray-600">Great job on completing the quiz. Here are your results.</p>
+            </div>
+            <!-- @END_COMPONENT: ResultsHeader -->
+
+            <!-- @COMPONENT: ScoreCard -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-6">
+                <div class="text-center">
+                    <div class="mb-6">
+                        <div class="text-6xl font-bold text-success-green mb-2" data-bind="results.score">85%</div>
+                        <p class="text-gray-600">Your Score</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-gray-200">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-text-dark mb-1" data-bind="results.correctAnswers">8</div>
+                            <p class="text-sm text-gray-500">Correct Answers</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-text-dark mb-1" data-bind="results.totalQuestions">10</div>
+                            <p class="text-sm text-gray-500">Total Questions</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-text-dark mb-1" data-bind="results.timeTaken">18:23</div>
+                            <p class="text-sm text-gray-500">Time Taken</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: ScoreCard -->
+
+            <!-- @COMPONENT: QuestionReview -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+                <h2 class="text-lg font-semibold text-text-dark mb-4">Question Review</h2>
+                
+                <div class="space-y-4">
+                    <!-- @MAP: results.questions.map((question, index) => ( -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm font-medium text-gray-500">Question 1</span>
+                                <span class="px-2 py-1 text-xs font-medium bg-success-green bg-opacity-10 text-success-green rounded-full">Correct</span>
+                            </div>
+                            <div class="text-sm text-gray-500">1 point</div>
+                        </div>
+                        <p class="text-text-dark mb-3" data-bind="question.text">What is the capital of France?</p>
+                        <div class="text-sm">
+                            <p class="text-gray-600">Your answer: <span class="font-medium text-success-green">Paris</span></p>
+                            <p class="text-gray-600">Correct answer: <span class="font-medium">Paris</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm font-medium text-gray-500">Question 2</span>
+                                <span class="px-2 py-1 text-xs font-medium bg-warning-red bg-opacity-10 text-warning-red rounded-full">Incorrect</span>
+                            </div>
+                            <div class="text-sm text-gray-500">0 points</div>
+                        </div>
+                        <p class="text-text-dark mb-3">Solve for x: 2x + 5 = 15</p>
+                        <div class="text-sm">
+                            <p class="text-gray-600">Your answer: <span class="font-medium text-warning-red">x = 10</span></p>
+                            <p class="text-gray-600">Correct answer: <span class="font-medium text-success-green">x = 5</span></p>
+                        </div>
+                    </div>
+                    <!-- @END_MAP )) -->
+                </div>
+            </div>
+            <!-- @END_COMPONENT: QuestionReview -->
+
+            <!-- @COMPONENT: ResultsActions -->
+            <div class="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4">
+                <button class="w-full sm:w-auto bg-google-blue text-white px-6 py-3 rounded-md font-medium hover:bg-blue-600 transition-colors">
+                    Return to Dashboard
+                </button>
+                <button class="w-full sm:w-auto bg-white text-google-blue border border-google-blue px-6 py-3 rounded-md font-medium hover:bg-blue-50 transition-colors">
+                    View All Results
+                </button>
+            </div>
+            <!-- @END_COMPONENT: ResultsActions -->
+        </div>
+    </div>
+
+    <script>
+        // TODO: Implement business logic for quiz management, timer functionality, and state management
+        
+        (function() {
+            // Demo view switching functionality
+            const views = {
+                'teacher-dashboard': document.getElementById('teacher-dashboard'),
+                'quiz-creation': document.getElementById('quiz-creation'),
+                'student-quiz': document.getElementById('student-quiz'),
+                'student-results': document.getElementById('student-results')
+            };
+
+            let currentView = 'teacher-dashboard';
+
+            function switchView(viewName) {
+                Object.keys(views).forEach(key => {
+                    views[key].style.display = key === viewName ? 'block' : 'none';
+                });
+                currentView = viewName;
+            }
+
+            // Demo timer functionality
+            let timeRemaining = 23 * 60 + 45; // 23:45 in seconds
+            
+            function updateTimer() {
+                if (currentView === 'student-quiz') {
+                    const minutes = Math.floor(timeRemaining / 60);
+                    const seconds = timeRemaining % 60;
+                    const timerElement = document.querySelector('[data-bind="timer.remaining"]');
+                    if (timerElement) {
+                        timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    }
+                    
+                    if (timeRemaining > 0) {
+                        timeRemaining--;
+                    } else {
+                        // Auto-submit quiz when time expires
+                        alert('Time\'s up! Quiz will be submitted automatically.');
+                        switchView('student-results');
+                    }
+                }
+            }
+
+            setInterval(updateTimer, 1000);
+
+            // Demo navigation handlers
+            document.addEventListener('click', function(e) {
+                const target = e.target.closest('button');
+                if (!target) return;
+
+                const text = target.textContent.trim();
+                
+                if (text.includes('Create New Quiz') || text.includes('Create Quiz')) {
+                    switchView('quiz-creation');
+                } else if (text.includes('Dashboard') || text.includes('Return to Dashboard')) {
+                    switchView('teacher-dashboard');
+                } else if (text.includes('Take Quiz') || target.classList.contains('take-quiz-btn')) {
+                    switchView('student-quiz');
+                } else if (text.includes('Submit') && currentView === 'student-quiz') {
+                    if (confirm('Are you sure you want to submit your quiz?')) {
+                        switchView('student-results');
+                    }
+                }
+            });
+
+            // Initialize with teacher dashboard
+            switchView('teacher-dashboard');
+        })();
+    </script>
+
+</body>
+</html>

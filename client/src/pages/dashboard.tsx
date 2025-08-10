@@ -12,7 +12,7 @@ import type { Quiz, QuizAttempt, User } from "@shared/schema";
 
 export default function Dashboard() {
   const { toast } = useToast();
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { isAuthenticated, isLoading, user, logoutMutation } = useAuth();
 
   // Redirect if not authenticated or not a teacher
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function Dashboard() {
   });
 
   const handleLogout = () => {
-    window.location.href = "/api/logout";
+    logoutMutation.mutate();
   };
 
   if (isLoading || !user) return null;
@@ -65,18 +65,18 @@ export default function Dashboard() {
                 Teacher
               </span>
               {user.profileImageUrl && (
-                <img 
-                  src={user.profileImageUrl} 
-                  alt="Profile" 
+                <img
+                  src={user.profileImageUrl}
+                  alt="Profile"
                   className="w-8 h-8 rounded-full object-cover"
                 />
               )}
               <span className="hidden sm:block font-medium">
                 {user.firstName} {user.lastName}
               </span>
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={handleLogout}
               >
                 Logout
@@ -172,8 +172,8 @@ export default function Dashboard() {
                         </div>
                         <div className="flex items-center space-x-2">
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            quiz.isActive 
-                              ? 'bg-success-green text-white' 
+                            quiz.isActive
+                              ? 'bg-success-green text-white'
                               : 'bg-gray-500 text-white'
                           }`}>
                             {quiz.isActive ? 'Active' : 'Closed'}

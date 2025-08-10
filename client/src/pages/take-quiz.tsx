@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -23,6 +23,7 @@ export default function TakeQuiz() {
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [timeRemaining, setTimeRemaining] = useState<number>(0);
   const [quizStartTime] = useState<number>(Date.now());
+  const isSubmitting = useRef(false);
 
   const { data: quiz, isLoading: quizLoading } = useQuery({
     queryKey: ["/api/quizzes", params?.id],
@@ -50,9 +51,11 @@ export default function TakeQuiz() {
         title: "Quiz Submitted",
         description: "Your quiz has been submitted successfully!",
       });
+      isSubmitting.current = false;
       setLocation("/");
     },
     onError: (error) => {
+      isSubmitting.current = false;
       if (isUnauthorizedError(error)) {
         toast({
           title: "Unauthorized",
@@ -95,15 +98,21 @@ export default function TakeQuiz() {
     }));
   };
 
-  const handleSubmitQuiz = () => {
-    const timeTaken = Math.floor((Date.now() - quizStartTime) / 1000);
-    submitQuizMutation.mutate({ answers, timeTaken });
-  };
+  const handleSubmitQuiz = useCallback(() => {
+    if (isSubmitting.current) return;
+    isSubmitting.current = true;
 
-  const handleTimeExpiry = () => {
     const timeTaken = Math.floor((Date.now() - quizStartTime) / 1000);
     submitQuizMutation.mutate({ answers, timeTaken });
-  };
+  }, [answers, quizStartTime, submitQuizMutation]);
+
+  const handleTimeExpiry = useCallback(() => {
+    if (isSubmitting.current) return;
+    isSubmitting.current = true;
+
+    const timeTaken = Math.floor((Date.now() - quizStartTime) / 1000);
+    submitQuizMutation.mutate({ answers, timeTaken });
+  }, [answers, quizStartTime, submitQuizMutation]);
 
   const nextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
@@ -180,7 +189,7 @@ export default function TakeQuiz() {
               />
             </div>
           </div>
-          
+
           {/* Progress Bar */}
           <div className="mt-4">
             <Progress value={progressPercentage} className="w-full" />
@@ -237,22 +246,23 @@ export default function TakeQuiz() {
               {questions.map((_, index) => {
                 const isAnswered = answers[questions[index].id] !== undefined;
                 const isCurrent = index === currentQuestionIndex;
-                
-                return (
+
+                return index >= currentQuestionIndex - 5 && index <= currentQuestionIndex + 5 ? (
                   <button
                     key={index}
                     onClick={() => goToQuestion(index)}
-                    className={`w-8 h-8 rounded-full text-sm font-medium ${
-                      isCurrent
+                    className={`w-8 h-8 rounded-full text-sm font-medium ${isCurrent
                         ? 'bg-google-blue text-white'
                         : isAnswered
-                        ? 'bg-success-green text-white'
-                        : 'bg-gray-200 text-gray-600'
-                    }`}
+                          ? 'bg-success-green text-white'
+                          : 'bg-gray-200 text-gray-600'
+                      }`}
                   >
                     {index + 1}
                   </button>
-                );
+                ) : (
+                  <>
+                  </>);
               })}
             </div>
           </div>

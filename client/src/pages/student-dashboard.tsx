@@ -12,7 +12,7 @@ import type { Quiz, QuizAttempt } from "@shared/schema";
 
 export default function StudentDashboard() {
   const { toast } = useToast();
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { isAuthenticated, isLoading, user, logoutMutation } = useAuth();
 
   // Redirect if not authenticated or not a student
   useEffect(() => {
@@ -42,7 +42,7 @@ export default function StudentDashboard() {
   });
 
   const handleLogout = () => {
-    window.location.href = "/api/logout";
+    logoutMutation.mutate();
   };
 
   if (isLoading || !user) return null;
@@ -50,7 +50,7 @@ export default function StudentDashboard() {
   // Calculate statistics
   const totalQuizzes = quizzes.length;
   const completedQuizzes = attempts.length;
-  const averageScore = attempts.length > 0 
+  const averageScore = attempts.length > 0
     ? Math.round(attempts.reduce((sum: number, attempt: any) => sum + (attempt.score / attempt.totalQuestions) * 100, 0) / attempts.length)
     : 0;
 
@@ -71,18 +71,18 @@ export default function StudentDashboard() {
                 Student
               </span>
               {user.profileImageUrl && (
-                <img 
-                  src={user.profileImageUrl} 
-                  alt="Profile" 
+                <img
+                  src={user.profileImageUrl}
+                  alt="Profile"
                   className="w-8 h-8 rounded-full object-cover"
                 />
               )}
               <span className="hidden sm:block font-medium">
                 {user.firstName} {user.lastName}
               </span>
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={handleLogout}
               >
                 Logout
@@ -127,7 +127,7 @@ export default function StudentDashboard() {
           />
           <StatsCard
             title="Best Score"
-            value={attempts.length > 0 
+            value={attempts.length > 0
               ? `${Math.max(...attempts.map((a: any) => Math.round((a.score / a.totalQuestions) * 100)))}%`
               : "0%"}
             change="Personal best"
@@ -235,14 +235,14 @@ export default function StudentDashboard() {
                       <div key={attempt.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                         <div className="flex items-center space-x-4">
                           <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                            scorePercentage >= 80 
+                            scorePercentage >= 80
                               ? 'bg-success-green bg-opacity-10'
                               : scorePercentage >= 60
                               ? 'bg-accent-yellow bg-opacity-10'
                               : 'bg-warning-red bg-opacity-10'
                           }`}>
                             <Trophy className={`w-5 h-5 ${
-                              scorePercentage >= 80 
+                              scorePercentage >= 80
                                 ? 'text-success-green'
                                 : scorePercentage >= 60
                                 ? 'text-accent-yellow'

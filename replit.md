@@ -28,7 +28,7 @@ Preferred communication style: Simple, everyday language.
 - **Error Handling**: Centralized error handling with proper HTTP status codes and JSON responses
 
 ### Database Architecture
-- **Database**: PostgreSQL with Neon serverless driver for scalable cloud database management
+- **Database**: PostgreSQL with standard pg driver for local container-based database management
 - **ORM**: Drizzle ORM for type-safe database queries and schema management
 - **Schema Design**: Relational schema with users, quizzes, questions, quiz_attempts, and sessions tables
 - **Migrations**: Database migrations managed through Drizzle Kit for version control
@@ -49,7 +49,7 @@ Preferred communication style: Simple, everyday language.
 ## External Dependencies
 
 ### Database & Infrastructure
-- **Neon PostgreSQL**: Serverless PostgreSQL database with connection pooling
+- **PostgreSQL Container**: Local PostgreSQL database running in a container with standard pg driver
 - **Environment Variables**: DATABASE_URL for database connection, SESSION_SECRET for session security
 
 ### Authentication Services
