@@ -1,0 +1,786 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizMaster - Educational Quiz Management Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'google-blue': '#4285F4',
+                        'google-green': '#34A853',
+                        'google-red': '#EA4335',
+                        'google-yellow': '#FBBC04',
+                        'google-bg': '#F8F9FA',
+                        'google-text': '#202124',
+                        'google-text-secondary': '#5F6368'
+                    },
+                    fontFamily: {
+                        'roboto': ['Roboto', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-roboto bg-google-bg text-google-text">
+
+    <!-- @COMPONENT: NavigationHeader [role-based navigation] -->
+    <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-graduation-cap text-google-blue text-2xl"></i>
+                        <span class="text-xl font-medium text-google-text">QuizMaster</span>
+                    </div>
+                    <div class="hidden md:flex items-center space-x-1 ml-8">
+                        <button class="px-4 py-2 text-google-blue bg-blue-50 rounded-lg font-medium" data-mock="true">Dashboard</button>
+                        <button class="px-4 py-2 text-google-text-secondary hover:bg-gray-100 rounded-lg" data-mock="true">My Quizzes</button>
+                        <button class="px-4 py-2 text-google-text-secondary hover:bg-gray-100 rounded-lg" data-mock="true">Create Quiz</button>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="p-2 text-google-text-secondary hover:bg-gray-100 rounded-full">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <div class="flex items-center space-x-2">
+                        <!-- Teacher profile image - not guaranteed to be square -->
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&w=40&h=40&fit=crop&crop=face" 
+                             alt="Teacher profile" class="w-8 h-8 rounded-full object-cover" data-mock-image="true">
+                        <span class="text-sm font-medium hidden sm:block" data-bind="user.name" data-mock="true">Dr. Sarah Johnson</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- @END_COMPONENT: NavigationHeader -->
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- @COMPONENT: TeacherDashboard [statistics and overview] -->
+        <div id="teacher-dashboard" class="space-y-8">
+            
+            <!-- Dashboard Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h1 class="text-2xl font-medium text-google-text">Dashboard</h1>
+                    <p class="text-google-text-secondary mt-1">Welcome back! Here's your quiz overview.</p>
+                </div>
+                <button class="mt-4 sm:mt-0 bg-google-blue hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium flex items-center space-x-2 shadow-sm">
+                    <i class="fas fa-plus"></i>
+                    <span>Create New Quiz</span>
+                </button>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-google-text-secondary text-sm font-medium">Total Quizzes</p>
+                            <p class="text-3xl font-bold text-google-text mt-2" data-bind="stats.totalQuizzes" data-mock="true">24</p>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded-lg">
+                            <i class="fas fa-clipboard-list text-google-blue text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center mt-4 text-sm">
+                        <span class="text-google-green">+12%</span>
+                        <span class="text-google-text-secondary ml-2">from last month</span>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-google-text-secondary text-sm font-medium">Active Students</p>
+                            <p class="text-3xl font-bold text-google-text mt-2" data-bind="stats.activeStudents" data-mock="true">156</p>
+                        </div>
+                        <div class="bg-green-50 p-3 rounded-lg">
+                            <i class="fas fa-users text-google-green text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center mt-4 text-sm">
+                        <span class="text-google-green">+8%</span>
+                        <span class="text-google-text-secondary ml-2">from last month</span>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-google-text-secondary text-sm font-medium">Average Score</p>
+                            <p class="text-3xl font-bold text-google-text mt-2" data-bind="stats.averageScore" data-mock="true">87.2%</p>
+                        </div>
+                        <div class="bg-yellow-50 p-3 rounded-lg">
+                            <i class="fas fa-chart-line text-google-yellow text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center mt-4 text-sm">
+                        <span class="text-google-green">+3.2%</span>
+                        <span class="text-google-text-secondary ml-2">from last month</span>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-google-text-secondary text-sm font-medium">Completion Rate</p>
+                            <p class="text-3xl font-bold text-google-text mt-2" data-bind="stats.completionRate" data-mock="true">94.8%</p>
+                        </div>
+                        <div class="bg-green-50 p-3 rounded-lg">
+                            <i class="fas fa-check-circle text-google-green text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center mt-4 text-sm">
+                        <span class="text-google-green">+1.4%</span>
+                        <span class="text-google-text-secondary ml-2">from last month</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts and Recent Activity -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Performance Chart -->
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-medium text-google-text">Class Performance Trends</h3>
+                        <select class="text-sm border border-gray-300 rounded-lg px-3 py-1 text-google-text-secondary">
+                            <option data-mock="true">Last 7 days</option>
+                            <option data-mock="true">Last 30 days</option>
+                            <option data-mock="true">Last 3 months</option>
+                        </select>
+                    </div>
+                    <canvas id="performanceChart" class="w-full h-64"></canvas>
+                </div>
+
+                <!-- Recent Quizzes -->
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-medium text-google-text">Recent Quiz Activity</h3>
+                        <button class="text-google-blue text-sm font-medium hover:underline">View All</button>
+                    </div>
+                    <div class="space-y-4">
+                        <!-- @MAP: recentQuizzes.map(quiz => ( -->
+                        <div class="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg transition-colors" data-mock="true">
+                            <div class="bg-blue-50 p-2 rounded-lg">
+                                <i class="fas fa-quiz text-google-blue"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-medium text-google-text">Introduction to Biology</p>
+                                <p class="text-sm text-google-text-secondary">32 students completed • 2 hours ago</p>
+                            </div>
+                            <span class="text-google-green font-medium">91.2%</span>
+                        </div>
+                        <div class="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg transition-colors" data-mock="true">
+                            <div class="bg-green-50 p-2 rounded-lg">
+                                <i class="fas fa-quiz text-google-green"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-medium text-google-text">Chemical Reactions</p>
+                                <p class="text-sm text-google-text-secondary">28 students completed • 1 day ago</p>
+                            </div>
+                            <span class="text-google-green font-medium">88.7%</span>
+                        </div>
+                        <div class="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg transition-colors" data-mock="true">
+                            <div class="bg-yellow-50 p-2 rounded-lg">
+                                <i class="fas fa-quiz text-google-yellow"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-medium text-google-text">Physics Motion Laws</p>
+                                <p class="text-sm text-google-text-secondary">15 students completed • 2 days ago</p>
+                            </div>
+                            <span class="text-google-yellow font-medium">76.3%</span>
+                        </div>
+                        <!-- @END_MAP )) -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Management Table -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="p-6 border-b border-gray-100">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                        <h3 class="text-lg font-medium text-google-text">All Quizzes</h3>
+                        <div class="flex items-center space-x-3 mt-4 sm:mt-0">
+                            <div class="relative">
+                                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-google-text-secondary"></i>
+                                <input type="text" placeholder="Search quizzes..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-google-blue focus:border-transparent">
+                            </div>
+                            <select class="border border-gray-300 rounded-lg px-3 py-2 text-sm text-google-text-secondary">
+                                <option data-mock="true">All Subjects</option>
+                                <option data-mock="true">Biology</option>
+                                <option data-mock="true">Chemistry</option>
+                                <option data-mock="true">Physics</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-google-text-secondary uppercase tracking-wider">Quiz Title</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-google-text-secondary uppercase tracking-wider">Subject</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-google-text-secondary uppercase tracking-wider">Questions</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-google-text-secondary uppercase tracking-wider">Time Limit</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-google-text-secondary uppercase tracking-wider">Attempts</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-google-text-secondary uppercase tracking-wider">Avg Score</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-google-text-secondary uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <!-- @MAP: quizzes.map(quiz => ( -->
+                            <tr class="hover:bg-gray-50" data-mock="true">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="bg-blue-50 p-2 rounded-lg mr-3">
+                                            <i class="fas fa-clipboard-list text-google-blue"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-medium text-google-text">Cell Division and Mitosis</div>
+                                            <div class="text-sm text-google-text-secondary">Created 2 days ago</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Biology</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-google-text">15</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-google-text">30 min</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-google-text">32</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm font-medium text-google-green">91.2%</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <div class="flex items-center space-x-2">
+                                        <button class="text-google-blue hover:text-blue-600" title="View Results">
+                                            <i class="fas fa-chart-bar"></i>
+                                        </button>
+                                        <button class="text-google-text-secondary hover:text-google-text" title="Edit Quiz">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="text-google-red hover:text-red-600" title="Delete Quiz">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50" data-mock="true">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="bg-green-50 p-2 rounded-lg mr-3">
+                                            <i class="fas fa-clipboard-list text-google-green"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-medium text-google-text">Periodic Table Elements</div>
+                                            <div class="text-sm text-google-text-secondary">Created 1 week ago</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Chemistry</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-google-text">20</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-google-text">45 min</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-google-text">28</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm font-medium text-google-green">88.7%</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <div class="flex items-center space-x-2">
+                                        <button class="text-google-blue hover:text-blue-600" title="View Results">
+                                            <i class="fas fa-chart-bar"></i>
+                                        </button>
+                                        <button class="text-google-text-secondary hover:text-google-text" title="Edit Quiz">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="text-google-red hover:text-red-600" title="Delete Quiz">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- @END_MAP )) -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: TeacherDashboard -->
+
+        <!-- @COMPONENT: QuizCreationInterface [quiz builder form] -->
+        <div id="quiz-creation" class="hidden space-y-8">
+            <div class="flex items-center space-x-4">
+                <button class="text-google-text-secondary hover:text-google-text">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1 class="text-2xl font-medium text-google-text">Create New Quiz</h1>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Quiz Settings -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 sticky top-24">
+                        <h3 class="text-lg font-medium text-google-text mb-6">Quiz Settings</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-google-text mb-2">Quiz Title</label>
+                                <input type="text" placeholder="Enter quiz title..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-google-blue focus:border-transparent" data-mock="true" value="Introduction to Photosynthesis">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-google-text mb-2">Subject</label>
+                                <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-google-blue focus:border-transparent">
+                                    <option data-mock="true">Biology</option>
+                                    <option data-mock="true">Chemistry</option>
+                                    <option data-mock="true">Physics</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-google-text mb-2">Time Limit (minutes)</label>
+                                <input type="number" placeholder="30" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-google-blue focus:border-transparent" data-mock="true" value="30">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-google-text mb-2">Instructions</label>
+                                <textarea rows="4" placeholder="Enter quiz instructions..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-google-blue focus:border-transparent" data-mock="true">Read each question carefully and select the best answer. You have 30 minutes to complete this quiz.</textarea>
+                            </div>
+                            <div class="pt-4 border-t border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium text-google-text">Questions Added</span>
+                                    <span class="text-sm text-google-text-secondary" data-bind="questions.length" data-mock="true">3 questions</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question Builder -->
+                <div class="lg:col-span-2">
+                    <div class="space-y-6">
+                        <!-- @MAP: questions.map((question, index) => ( -->
+                        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100" data-mock="true">
+                            <div class="flex items-center justify-between mb-6">
+                                <h4 class="text-lg font-medium text-google-text">Question 1</h4>
+                                <div class="flex items-center space-x-2">
+                                    <button class="text-google-text-secondary hover:text-google-text p-2">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                    <button class="text-google-red hover:text-red-600 p-2">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-google-text mb-2">Question Text</label>
+                                    <textarea rows="3" placeholder="Enter your question..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-google-blue focus:border-transparent" data-mock="true">What is the primary function of chlorophyll in plants?</textarea>
+                                </div>
+                                
+                                <div class="space-y-3">
+                                    <label class="block text-sm font-medium text-google-text">Answer Options</label>
+                                    <!-- @MAP: question.options.map((option, optionIndex) => ( -->
+                                    <div class="flex items-center space-x-3" data-mock="true">
+                                        <input type="radio" name="correct-answer-1" class="w-4 h-4 text-google-blue focus:ring-google-blue" checked>
+                                        <div class="flex-1">
+                                            <input type="text" placeholder="Enter answer option..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-google-blue focus:border-transparent" value="To absorb light energy for photosynthesis">
+                                        </div>
+                                        <button class="text-google-red hover:text-red-600 p-2">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center space-x-3" data-mock="true">
+                                        <input type="radio" name="correct-answer-1" class="w-4 h-4 text-google-blue focus:ring-google-blue">
+                                        <div class="flex-1">
+                                            <input type="text" placeholder="Enter answer option..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-google-blue focus:border-transparent" value="To transport water through the plant">
+                                        </div>
+                                        <button class="text-google-red hover:text-red-600 p-2">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <!-- @END_MAP )) -->
+                                    
+                                    <button class="flex items-center space-x-2 text-google-blue hover:text-blue-600 px-4 py-2 border border-dashed border-gray-300 rounded-lg w-full justify-center">
+                                        <i class="fas fa-plus"></i>
+                                        <span>Add Option</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- @END_MAP )) -->
+                        
+                        <!-- Add Question Button -->
+                        <button class="w-full bg-white border-2 border-dashed border-gray-300 rounded-xl p-6 text-google-text-secondary hover:border-google-blue hover:text-google-blue transition-colors">
+                            <i class="fas fa-plus text-2xl mb-2"></i>
+                            <div class="font-medium">Add New Question</div>
+                        </button>
+                        
+                        <!-- Action Buttons -->
+                        <div class="flex justify-end space-x-4 pt-6">
+                            <button class="px-6 py-3 border border-gray-300 rounded-lg text-google-text-secondary hover:bg-gray-50">
+                                Save as Draft
+                            </button>
+                            <button class="px-6 py-3 bg-google-blue hover:bg-blue-600 text-white rounded-lg font-medium">
+                                Publish Quiz
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: QuizCreationInterface -->
+
+        <!-- @COMPONENT: StudentQuizInterface [quiz taking view] -->
+        <div id="student-quiz" class="hidden">
+            <!-- Quiz Header with Timer -->
+            <div class="bg-white shadow-sm border-b border-gray-200 sticky top-16 z-40">
+                <div class="max-w-4xl mx-auto px-4 py-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-lg font-medium text-google-text" data-bind="quiz.title" data-mock="true">Introduction to Photosynthesis</h2>
+                            <p class="text-sm text-google-text-secondary">Question <span data-bind="currentQuestion" data-mock="true">2</span> of <span data-bind="totalQuestions" data-mock="true">10</span></p>
+                        </div>
+                        <div class="flex items-center space-x-6">
+                            <!-- Timer Display -->
+                            <div class="flex items-center space-x-2 bg-google-red bg-opacity-10 px-4 py-2 rounded-lg">
+                                <i class="fas fa-clock text-google-red"></i>
+                                <span class="font-mono text-lg font-medium text-google-red" data-bind="timeRemaining" data-mock="true">23:45</span>
+                            </div>
+                            <button class="text-google-text-secondary hover:text-google-text" title="Help">
+                                <i class="fas fa-question-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Progress Bar -->
+                    <div class="mt-4">
+                        <div class="bg-gray-200 rounded-full h-2">
+                            <div class="bg-google-blue h-2 rounded-full transition-all duration-300" style="width: 20%" data-bind="progress"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Content -->
+            <div class="max-w-4xl mx-auto px-4 py-8">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+                    <!-- Question -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-medium text-google-text mb-4" data-bind="currentQuestion.text" data-mock="true">
+                            Which of the following best describes the process of photosynthesis?
+                        </h3>
+                        <!-- Question image if available -->
+                        <!-- A diagram showing the photosynthesis process with sunlight, carbon dioxide, and water inputs -->
+                        <img src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?ixlib=rb-4.0.3&w=600&h=300&fit=crop" 
+                             alt="Photosynthesis diagram" class="rounded-lg shadow-sm w-full max-w-md mx-auto mb-6" data-mock-image="true">
+                    </div>
+
+                    <!-- Answer Options -->
+                    <div class="space-y-4 mb-8">
+                        <!-- @MAP: currentQuestion.options.map((option, index) => ( -->
+                        <label class="flex items-start space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors" data-mock="true">
+                            <input type="radio" name="answer" value="A" class="mt-1 w-5 h-5 text-google-blue focus:ring-google-blue">
+                            <div class="flex-1">
+                                <span class="font-medium text-google-text">A.</span>
+                                <span class="ml-2 text-google-text">The process by which plants convert sunlight, carbon dioxide, and water into glucose and oxygen</span>
+                            </div>
+                        </label>
+                        <label class="flex items-start space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors" data-mock="true">
+                            <input type="radio" name="answer" value="B" class="mt-1 w-5 h-5 text-google-blue focus:ring-google-blue">
+                            <div class="flex-1">
+                                <span class="font-medium text-google-text">B.</span>
+                                <span class="ml-2 text-google-text">The process by which plants absorb nutrients from the soil</span>
+                            </div>
+                        </label>
+                        <label class="flex items-start space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors" data-mock="true">
+                            <input type="radio" name="answer" value="C" class="mt-1 w-5 h-5 text-google-blue focus:ring-google-blue">
+                            <div class="flex-1">
+                                <span class="font-medium text-google-text">C.</span>
+                                <span class="ml-2 text-google-text">The breakdown of glucose to release energy in plant cells</span>
+                            </div>
+                        </label>
+                        <label class="flex items-start space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors" data-mock="true">
+                            <input type="radio" name="answer" value="D" class="mt-1 w-5 h-5 text-google-blue focus:ring-google-blue">
+                            <div class="flex-1">
+                                <span class="font-medium text-google-text">D.</span>
+                                <span class="ml-2 text-google-text">The movement of water through plant tissues</span>
+                            </div>
+                        </label>
+                        <!-- @END_MAP )) -->
+                    </div>
+
+                    <!-- Navigation Controls -->
+                    <div class="flex items-center justify-between pt-6 border-t border-gray-200">
+                        <button class="flex items-center space-x-2 px-6 py-3 border border-gray-300 rounded-lg text-google-text-secondary hover:bg-gray-50 disabled:opacity-50" disabled>
+                            <i class="fas fa-chevron-left"></i>
+                            <span>Previous</span>
+                        </button>
+                        
+                        <div class="flex items-center space-x-4">
+                            <button class="px-4 py-2 text-google-text-secondary hover:bg-gray-100 rounded-lg">
+                                Flag for Review
+                            </button>
+                            <button class="px-4 py-2 text-google-blue hover:bg-blue-50 rounded-lg">
+                                Skip Question
+                            </button>
+                        </div>
+                        
+                        <button class="flex items-center space-x-2 px-6 py-3 bg-google-blue hover:bg-blue-600 text-white rounded-lg font-medium">
+                            <span>Next</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Question Navigator -->
+                <div class="mt-8 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                    <h4 class="text-sm font-medium text-google-text mb-4">Question Navigator</h4>
+                    <div class="grid grid-cols-5 sm:grid-cols-10 gap-2">
+                        <!-- @MAP: Array.from({length: totalQuestions}, (_, index) => ( -->
+                        <button class="w-8 h-8 rounded-lg border-2 border-google-blue bg-google-blue text-white text-sm font-medium" data-mock="true">1</button>
+                        <button class="w-8 h-8 rounded-lg border-2 border-google-blue bg-google-blue text-white text-sm font-medium" data-mock="true">2</button>
+                        <button class="w-8 h-8 rounded-lg border-2 border-gray-300 text-google-text-secondary hover:border-google-blue text-sm" data-mock="true">3</button>
+                        <button class="w-8 h-8 rounded-lg border-2 border-gray-300 text-google-text-secondary hover:border-google-blue text-sm" data-mock="true">4</button>
+                        <button class="w-8 h-8 rounded-lg border-2 border-gray-300 text-google-text-secondary hover:border-google-blue text-sm" data-mock="true">5</button>
+                        <button class="w-8 h-8 rounded-lg border-2 border-gray-300 text-google-text-secondary hover:border-google-blue text-sm" data-mock="true">6</button>
+                        <button class="w-8 h-8 rounded-lg border-2 border-gray-300 text-google-text-secondary hover:border-google-blue text-sm" data-mock="true">7</button>
+                        <button class="w-8 h-8 rounded-lg border-2 border-gray-300 text-google-text-secondary hover:border-google-blue text-sm" data-mock="true">8</button>
+                        <button class="w-8 h-8 rounded-lg border-2 border-gray-300 text-google-text-secondary hover:border-google-blue text-sm" data-mock="true">9</button>
+                        <button class="w-8 h-8 rounded-lg border-2 border-gray-300 text-google-text-secondary hover:border-google-blue text-sm" data-mock="true">10</button>
+                        <!-- @END_MAP )) -->
+                    </div>
+                    <div class="flex items-center justify-between mt-4 text-sm">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-4 h-4 bg-google-blue rounded"></div>
+                                <span class="text-google-text-secondary">Answered</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-4 h-4 border-2 border-gray-300 rounded"></div>
+                                <span class="text-google-text-secondary">Not Answered</span>
+                            </div>
+                        </div>
+                        <button class="px-4 py-2 bg-google-green hover:bg-green-600 text-white rounded-lg font-medium">
+                            Submit Quiz
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: StudentQuizInterface -->
+
+        <!-- @COMPONENT: StudentDashboard [student quiz history and scores] -->
+        <div id="student-dashboard" class="hidden space-y-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h1 class="text-2xl font-medium text-google-text">My Quizzes</h1>
+                    <p class="text-google-text-secondary mt-1">Track your progress and view quiz results.</p>
+                </div>
+                <!-- Student profile with mock image -->
+                <div class="flex items-center space-x-3 mt-4 sm:mt-0">
+                    <img src="https://pixabay.com/get/g9226516287b7a526486fe9a2d9c5d53b42853e350fd43aaa2f159ddf528395a7dba03b3b816313856e765db4a9a728a27b9ffd25c6c3ae8169d7d9310e32e9ec_1280.jpg" 
+                         alt="Student profile" class="w-10 h-10 rounded-full object-cover" data-mock-image="true">
+                    <div>
+                        <p class="font-medium text-google-text" data-bind="student.name" data-mock="true">Emma Wilson</p>
+                        <p class="text-sm text-google-text-secondary">Grade 10 - Biology</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-google-text-secondary text-sm font-medium">Quizzes Completed</p>
+                            <p class="text-3xl font-bold text-google-text mt-2" data-bind="studentStats.completed" data-mock="true">18</p>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded-lg">
+                            <i class="fas fa-check-circle text-google-blue text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-google-text-secondary text-sm font-medium">Average Score</p>
+                            <p class="text-3xl font-bold text-google-text mt-2" data-bind="studentStats.averageScore" data-mock="true">89.3%</p>
+                        </div>
+                        <div class="bg-green-50 p-3 rounded-lg">
+                            <i class="fas fa-star text-google-green text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-google-text-secondary text-sm font-medium">Current Streak</p>
+                            <p class="text-3xl font-bold text-google-text mt-2" data-bind="studentStats.streak" data-mock="true">5</p>
+                        </div>
+                        <div class="bg-yellow-50 p-3 rounded-lg">
+                            <i class="fas fa-fire text-google-yellow text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz History -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="p-6 border-b border-gray-100">
+                    <h3 class="text-lg font-medium text-google-text">Recent Quiz Results</h3>
+                </div>
+                <div class="p-6 space-y-4">
+                    <!-- @MAP: studentQuizHistory.map(quiz => ( -->
+                    <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50" data-mock="true">
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-green-50 p-3 rounded-lg">
+                                <i class="fas fa-quiz text-google-green"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-google-text">Cell Division and Mitosis</h4>
+                                <p class="text-sm text-google-text-secondary">Biology • Completed 2 days ago</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-google-green">92%</div>
+                            <div class="text-sm text-google-text-secondary">15/15 questions</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50" data-mock="true">
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-blue-50 p-3 rounded-lg">
+                                <i class="fas fa-quiz text-google-blue"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-google-text">Chemical Reactions</h4>
+                                <p class="text-sm text-google-text-secondary">Chemistry • Completed 1 week ago</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-google-green">87%</div>
+                            <div class="text-sm text-google-text-secondary">17/20 questions</div>
+                        </div>
+                    </div>
+                    <!-- @END_MAP )) -->
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: StudentDashboard -->
+
+    </div>
+
+    <script>
+        (function() {
+            // TODO: Implement business logic, API calls, and state management
+            
+            // Initialize performance chart
+            const ctx = document.getElementById('performanceChart');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        datasets: [{
+                            label: 'Average Score',
+                            data: [85, 89, 92, 88, 94, 87, 91],
+                            borderColor: '#4285F4',
+                            backgroundColor: 'rgba(66, 133, 244, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                min: 70,
+                                max: 100,
+                                grid: {
+                                    color: '#f1f3f4'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Timer countdown simulation
+            let timeLeft = 1425; // 23:45 in seconds
+            const timerElement = document.querySelector('[data-bind="timeRemaining"]');
+            
+            function updateTimer() {
+                if (timeLeft > 0 && timerElement) {
+                    const minutes = Math.floor(timeLeft / 60);
+                    const seconds = timeLeft % 60;
+                    timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    timeLeft--;
+                }
+            }
+            
+            // Update timer every second when quiz view is active
+            setInterval(updateTimer, 1000);
+
+            // Navigation simulation
+            const navButtons = document.querySelectorAll('nav button');
+            const sections = ['teacher-dashboard', 'quiz-creation', 'student-quiz', 'student-dashboard'];
+            
+            navButtons.forEach((button, index) => {
+                button.addEventListener('click', function() {
+                    // Hide all sections
+                    sections.forEach(sectionId => {
+                        const section = document.getElementById(sectionId);
+                        if (section) section.classList.add('hidden');
+                    });
+                    
+                    // Show selected section (default to teacher dashboard)
+                    const targetSection = document.getElementById(sections[0]);
+                    if (targetSection) targetSection.classList.remove('hidden');
+                    
+                    // Update active button state
+                    navButtons.forEach(btn => {
+                        btn.classList.remove('text-google-blue', 'bg-blue-50');
+                        btn.classList.add('text-google-text-secondary');
+                    });
+                    this.classList.add('text-google-blue', 'bg-blue-50');
+                    this.classList.remove('text-google-text-secondary');
+                });
+            });
+
+            // Quiz answer selection
+            const answerOptions = document.querySelectorAll('input[name="answer"]');
+            answerOptions.forEach(option => {
+                option.addEventListener('change', function() {
+                    // Visual feedback for selected answer
+                    const labels = document.querySelectorAll('label');
+                    labels.forEach(label => label.classList.remove('border-google-blue', 'bg-blue-50'));
+                    
+                    if (this.checked) {
+                        this.closest('label').classList.add('border-google-blue', 'bg-blue-50');
+                    }
+                });
+            });
+
+        })();
+    </script>
+</body>
+</html>

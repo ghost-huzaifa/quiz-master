@@ -1,0 +1,803 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizMaster - Educational Quiz Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'google-blue': '#4285F4',
+                        'success-green': '#34A853',
+                        'warning-red': '#EA4335',
+                        'accent-yellow': '#FBBC04',
+                        'text-dark': '#202124',
+                        'bg-light': '#F8F9FA'
+                    },
+                    fontFamily: {
+                        'roboto': ['Roboto', 'Inter', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/heroicons@2.0.18/24/outline/index.js" type="module"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/heroicons@2.0.18/24/outline/index.css">
+</head>
+
+<body class="bg-bg-light font-roboto text-text-dark">
+    
+    <!-- Navigation Header -->
+    <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-4">
+                    <div class="text-2xl font-bold text-google-blue">QuizMaster</div>
+                    <div class="hidden md:flex space-x-8">
+                        <a href="#dashboard" class="text-gray-700 hover:text-google-blue font-medium">Dashboard</a>
+                        <a href="#quizzes" class="text-gray-700 hover:text-google-blue font-medium">My Quizzes</a>
+                        <a href="#create" class="text-gray-700 hover:text-google-blue font-medium">Create Quiz</a>
+                        <a href="#analytics" class="text-gray-700 hover:text-google-blue font-medium">Analytics</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="bg-google-blue text-white px-3 py-1 rounded-full text-sm font-medium">Teacher</span>
+                    <!-- Profile picture of a professional teacher in a classroom setting -->
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=150&h=150&q=80" alt="Teacher Profile" class="w-8 h-8 rounded-full object-cover">
+                    <span class="hidden sm:block font-medium" data-bind="user.name">Sarah Johnson</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- @COMPONENT: DashboardView [main teacher dashboard with statistics] -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Dashboard Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-text-dark mb-2">Dashboard</h1>
+            <p class="text-gray-600">Welcome back! Here's an overview of your quiz activity.</p>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total Quizzes</p>
+                        <p class="text-3xl font-bold text-text-dark" data-bind="stats.totalQuizzes">24</p>
+                    </div>
+                    <div class="w-12 h-12 bg-google-blue bg-opacity-10 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-google-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                    </div>
+                </div>
+                <p class="text-sm text-success-green mt-2">+3 this month</p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Active Students</p>
+                        <p class="text-3xl font-bold text-text-dark" data-bind="stats.activeStudents">156</p>
+                    </div>
+                    <div class="w-12 h-12 bg-success-green bg-opacity-10 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-success-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/>
+                        </svg>
+                    </div>
+                </div>
+                <p class="text-sm text-success-green mt-2">+12 this week</p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Average Score</p>
+                        <p class="text-3xl font-bold text-text-dark" data-bind="stats.averageScore">78%</p>
+                    </div>
+                    <div class="w-12 h-12 bg-accent-yellow bg-opacity-10 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-accent-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                    </div>
+                </div>
+                <p class="text-sm text-success-green mt-2">+2% improvement</p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Completion Rate</p>
+                        <p class="text-3xl font-bold text-text-dark" data-bind="stats.completionRate">92%</p>
+                    </div>
+                    <div class="w-12 h-12 bg-warning-red bg-opacity-10 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-warning-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                </div>
+                <p class="text-sm text-success-green mt-2">Excellent!</p>
+            </div>
+        </div>
+
+        <!-- Recent Activity and Quick Actions -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+            
+            <!-- Recent Quizzes -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-text-dark">Recent Quizzes</h3>
+                    </div>
+                    <div class="p-6">
+                        <!-- @MAP: recentQuizzes.map(quiz => ( -->
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg" data-mock="true">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-10 h-10 bg-google-blue bg-opacity-10 rounded-lg flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-google-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-text-dark" data-bind="quiz.title">Python Fundamentals Quiz</h4>
+                                        <p class="text-sm text-gray-600" data-bind="quiz.status">23 students completed</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="bg-success-green text-white px-2 py-1 rounded-full text-xs font-medium">Active</span>
+                                    <button class="text-gray-400 hover:text-gray-600">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg" data-mock="true">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-10 h-10 bg-success-green bg-opacity-10 rounded-lg flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-success-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-text-dark" data-bind="quiz.title">JavaScript Arrays & Objects</h4>
+                                        <p class="text-sm text-gray-600" data-bind="quiz.status">45 students completed</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="bg-gray-500 text-white px-2 py-1 rounded-full text-xs font-medium">Closed</span>
+                                    <button class="text-gray-400 hover:text-gray-600">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg" data-mock="true">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-10 h-10 bg-accent-yellow bg-opacity-10 rounded-lg flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-accent-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-text-dark" data-bind="quiz.title">HTML & CSS Basics</h4>
+                                        <p class="text-sm text-gray-600" data-bind="quiz.status">12 students in progress</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="bg-accent-yellow text-white px-2 py-1 rounded-full text-xs font-medium">Active</span>
+                                    <button class="text-gray-400 hover:text-gray-600">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- @END_MAP )) -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="space-y-6">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-semibold text-text-dark mb-4">Quick Actions</h3>
+                    <div class="space-y-3">
+                        <button class="w-full bg-google-blue text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-600 transition-colors flex items-center justify-center space-x-2" data-event="click:createNewQuiz">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            </svg>
+                            <span>Create New Quiz</span>
+                        </button>
+                        <button class="w-full border border-gray-300 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2" data-event="click:viewAnalytics">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            <span>View Analytics</span>
+                        </button>
+                        <button class="w-full border border-gray-300 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2" data-event="click:manageStudents">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/>
+                            </svg>
+                            <span>Manage Students</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Upcoming Quizzes -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-semibold text-text-dark mb-4">Upcoming Quizzes</h3>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-blue-50 rounded-lg border-l-4 border-google-blue" data-mock="true">
+                            <h4 class="font-medium text-text-dark text-sm" data-bind="upcomingQuiz.title">React Components Test</h4>
+                            <p class="text-xs text-gray-600" data-bind="upcomingQuiz.date">Tomorrow, 2:00 PM</p>
+                        </div>
+                        <div class="p-3 bg-green-50 rounded-lg border-l-4 border-success-green" data-mock="true">
+                            <h4 class="font-medium text-text-dark text-sm" data-bind="upcomingQuiz.title">Database Design Quiz</h4>
+                            <p class="text-xs text-gray-600" data-bind="upcomingQuiz.date">Friday, 10:00 AM</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- @END_COMPONENT: DashboardView -->
+
+    <!-- @COMPONENT: QuizCreationView [interface for creating new quizzes] -->
+    <div class="hidden" id="quiz-creation-view">
+        <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-text-dark mb-2">Create New Quiz</h1>
+                <p class="text-gray-600">Build an engaging multiple-choice quiz for your students.</p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+                <!-- Quiz Settings -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold text-text-dark mb-6">Quiz Settings</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Quiz Title</label>
+                            <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-google-blue focus:border-transparent" placeholder="Enter quiz title" data-bind="quiz.title">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+                            <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-google-blue focus:border-transparent" data-bind="quiz.subject">
+                                <option>Mathematics</option>
+                                <option>Science</option>
+                                <option>Computer Science</option>
+                                <option>History</option>
+                                <option>Literature</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Time Limit (minutes)</label>
+                            <input type="number" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-google-blue focus:border-transparent" placeholder="30" data-bind="quiz.timeLimit">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Total Questions</label>
+                            <input type="number" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-google-blue focus:border-transparent" placeholder="10" data-bind="quiz.totalQuestions">
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                        <textarea class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-google-blue focus:border-transparent" rows="3" placeholder="Brief description of the quiz content" data-bind="quiz.description"></textarea>
+                    </div>
+                </div>
+
+                <!-- Question Builder -->
+                <div class="border-t border-gray-200 pt-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-semibold text-text-dark">Questions</h2>
+                        <button class="bg-google-blue text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-600 transition-colors flex items-center space-x-2" data-event="click:addQuestion">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            </svg>
+                            <span>Add Question</span>
+                        </button>
+                    </div>
+
+                    <!-- @MAP: questions.map((question, index) => ( -->
+                    <div class="space-y-6">
+                        <div class="bg-gray-50 rounded-lg p-6 border border-gray-200" data-mock="true">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-medium text-text-dark">Question 1</h3>
+                                <button class="text-gray-400 hover:text-warning-red">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Question Text</label>
+                                <textarea class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-google-blue focus:border-transparent" rows="2" placeholder="Enter your question here" data-bind="question.text"></textarea>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Option A</label>
+                                    <div class="flex items-center space-x-3">
+                                        <input type="radio" name="correct-answer-1" class="text-google-blue focus:ring-google-blue" data-bind="question.correctAnswer">
+                                        <input type="text" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-google-blue focus:border-transparent" placeholder="Option A" data-bind="question.options[0]">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Option B</label>
+                                    <div class="flex items-center space-x-3">
+                                        <input type="radio" name="correct-answer-1" class="text-google-blue focus:ring-google-blue" data-bind="question.correctAnswer">
+                                        <input type="text" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-google-blue focus:border-transparent" placeholder="Option B" data-bind="question.options[1]">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Option C</label>
+                                    <div class="flex items-center space-x-3">
+                                        <input type="radio" name="correct-answer-1" class="text-google-blue focus:ring-google-blue" data-bind="question.correctAnswer">
+                                        <input type="text" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-google-blue focus:border-transparent" placeholder="Option C" data-bind="question.options[2]">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Option D</label>
+                                    <div class="flex items-center space-x-3">
+                                        <input type="radio" name="correct-answer-1" class="text-google-blue focus:ring-google-blue" data-bind="question.correctAnswer">
+                                        <input type="text" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-google-blue focus:border-transparent" placeholder="Option D" data-bind="question.options[3]">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_MAP )) -->
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center justify-between pt-8 border-t border-gray-200 mt-8">
+                    <button class="text-gray-600 hover:text-gray-800 font-medium" data-event="click:saveDraft">Save as Draft</button>
+                    <div class="flex space-x-4">
+                        <button class="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors" data-event="click:previewQuiz">Preview Quiz</button>
+                        <button class="bg-google-blue text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors" data-event="click:publishQuiz">Publish Quiz</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <!-- @END_COMPONENT: QuizCreationView -->
+
+    <!-- @COMPONENT: StudentQuizView [student interface for taking quizzes] -->
+    <div class="hidden" id="student-quiz-view">
+        <div class="min-h-screen bg-bg-light">
+            <!-- Quiz Header with Timer -->
+            <div class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-xl font-bold text-text-dark" data-bind="quiz.title">Python Fundamentals Quiz</h1>
+                            <p class="text-sm text-gray-600">Question <span data-bind="currentQuestion">3</span> of <span data-bind="totalQuestions">10</span></p>
+                        </div>
+                        <div class="flex items-center space-x-6">
+                            <!-- Timer Display -->
+                            <div class="flex items-center space-x-2 bg-warning-red bg-opacity-10 px-4 py-2 rounded-lg">
+                                <svg class="w-5 h-5 text-warning-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <span class="font-mono text-lg font-bold text-warning-red" data-bind="timeRemaining">12:45</span>
+                            </div>
+                            <!-- @STATE: timeRemaining:string = "12:45" -->
+                        </div>
+                    </div>
+                    
+                    <!-- Progress Bar -->
+                    <div class="mt-4">
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-google-blue h-2 rounded-full" style="width: 30%" data-bind="progressPercentage"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <!-- Question Card -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-6">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-medium text-text-dark mb-4" data-bind="currentQuestion.text">
+                            Which of the following is the correct way to define a function in Python?
+                        </h2>
+                    </div>
+
+                    <!-- Answer Options -->
+                    <div class="space-y-4">
+                        <!-- @MAP: currentQuestion.options.map((option, index) => ( -->
+                        <label class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors" data-mock="true">
+                            <input type="radio" name="answer" value="A" class="text-google-blue focus:ring-google-blue mr-4" data-bind="selectedAnswer">
+                            <span class="flex-1 text-gray-700" data-bind="option.text">def function_name():</span>
+                        </label>
+
+                        <label class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors" data-mock="true">
+                            <input type="radio" name="answer" value="B" class="text-google-blue focus:ring-google-blue mr-4" data-bind="selectedAnswer">
+                            <span class="flex-1 text-gray-700" data-bind="option.text">function function_name():</span>
+                        </label>
+
+                        <label class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors" data-mock="true">
+                            <input type="radio" name="answer" value="C" class="text-google-blue focus:ring-google-blue mr-4" data-bind="selectedAnswer">
+                            <span class="flex-1 text-gray-700" data-bind="option.text">func function_name():</span>
+                        </label>
+
+                        <label class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors" data-mock="true">
+                            <input type="radio" name="answer" value="D" class="text-google-blue focus:ring-google-blue mr-4" data-bind="selectedAnswer">
+                            <span class="flex-1 text-gray-700" data-bind="option.text">define function_name():</span>
+                        </label>
+                        <!-- @END_MAP )) -->
+                    </div>
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="flex items-center justify-between">
+                    <button class="flex items-center space-x-2 border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" data-event="click:previousQuestion">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                        <span>Previous</span>
+                    </button>
+
+                    <div class="flex items-center space-x-2">
+                        <!-- Question Navigation Dots -->
+                        <div class="flex space-x-2">
+                            <!-- @MAP: Array.from({length: totalQuestions}, (_, i) => ( -->
+                            <button class="w-8 h-8 rounded-full bg-success-green text-white text-sm font-medium" data-mock="true" data-bind="questionNumber">1</button>
+                            <button class="w-8 h-8 rounded-full bg-success-green text-white text-sm font-medium" data-mock="true" data-bind="questionNumber">2</button>
+                            <button class="w-8 h-8 rounded-full bg-google-blue text-white text-sm font-medium" data-mock="true" data-bind="questionNumber">3</button>
+                            <button class="w-8 h-8 rounded-full bg-gray-200 text-gray-600 text-sm font-medium" data-mock="true" data-bind="questionNumber">4</button>
+                            <button class="w-8 h-8 rounded-full bg-gray-200 text-gray-600 text-sm font-medium" data-mock="true" data-bind="questionNumber">5</button>
+                            <span class="text-gray-400">...</span>
+                            <button class="w-8 h-8 rounded-full bg-gray-200 text-gray-600 text-sm font-medium" data-mock="true" data-bind="questionNumber">10</button>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+
+                    <button class="flex items-center space-x-2 bg-google-blue text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors" data-event="click:nextQuestion">
+                        <span>Next</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Submit Quiz Button (Shows on last question) -->
+                <div class="mt-8 text-center">
+                    <button class="bg-success-green text-white px-8 py-3 rounded-lg font-medium hover:bg-green-600 transition-colors" data-event="click:submitQuiz" data-implementation="Should validate all questions answered before submission">
+                        Submit Quiz
+                    </button>
+                </div>
+            </main>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: StudentQuizView -->
+
+    <!-- @COMPONENT: QuizResultsView [displays quiz results and analytics] -->
+    <div class="hidden" id="quiz-results-view">
+        <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            
+            <!-- Results Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-text-dark mb-2">Quiz Results</h1>
+                <p class="text-gray-600">Detailed performance analysis for <span class="font-medium" data-bind="quiz.title">Python Fundamentals Quiz</span></p>
+            </div>
+
+            <!-- Overall Statistics -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Total Submissions</p>
+                            <p class="text-3xl font-bold text-text-dark" data-bind="results.totalSubmissions">47</p>
+                        </div>
+                        <div class="w-12 h-12 bg-google-blue bg-opacity-10 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-google-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Average Score</p>
+                            <p class="text-3xl font-bold text-text-dark" data-bind="results.averageScore">78.2%</p>
+                        </div>
+                        <div class="w-12 h-12 bg-success-green bg-opacity-10 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-success-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Highest Score</p>
+                            <p class="text-3xl font-bold text-text-dark" data-bind="results.highestScore">95%</p>
+                        </div>
+                        <div class="w-12 h-12 bg-accent-yellow bg-opacity-10 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-accent-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Pass Rate</p>
+                            <p class="text-3xl font-bold text-text-dark" data-bind="results.passRate">85%</p>
+                        </div>
+                        <div class="w-12 h-12 bg-warning-red bg-opacity-10 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-warning-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Results Table -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-text-dark">Student Performance</h3>
+                        <div class="flex items-center space-x-4">
+                            <input type="text" placeholder="Search students..." class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-google-blue focus:border-transparent text-sm">
+                            <button class="text-gray-600 hover:text-gray-800">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time Taken</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Completion</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <!-- @MAP: studentResults.map(student => ( -->
+                            <tr data-mock="true">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <!-- Portrait of a young female student smiling in a classroom -->
+                                        <img src="https://pixabay.com/get/g8d06158603fe9c74c0da3ca6810c7e64400493b2ae3637ee1758d82f2b18a9b4e935c9419fad4eebba0bce8ed588fdc3b53ccb4302d367af4d296b5d7c42d042_1280.jpg" alt="Student" class="w-8 h-8 rounded-full object-cover">
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-text-dark" data-bind="student.name">Emma Thompson</div>
+                                            <div class="text-sm text-gray-500" data-bind="student.email">emma.t@school.edu</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <span class="text-sm font-medium text-text-dark" data-bind="student.score">92%</span>
+                                        <div class="ml-2 w-16 bg-gray-200 rounded-full h-2">
+                                            <div class="bg-success-green h-2 rounded-full" style="width: 92%"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-bind="student.timeTaken">18:32</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-bind="student.completionDate">Oct 15, 2024</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-success-green bg-opacity-20 text-success-green">Passed</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <button class="text-google-blue hover:text-blue-600" data-event="click:viewDetails">View Details</button>
+                                </td>
+                            </tr>
+
+                            <tr data-mock="true">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <!-- Portrait of a young male student concentrating while studying -->
+                                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=150&h=150&q=80" alt="Student" class="w-8 h-8 rounded-full object-cover">
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-text-dark" data-bind="student.name">Marcus Johnson</div>
+                                            <div class="text-sm text-gray-500" data-bind="student.email">marcus.j@school.edu</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <span class="text-sm font-medium text-text-dark" data-bind="student.score">65%</span>
+                                        <div class="ml-2 w-16 bg-gray-200 rounded-full h-2">
+                                            <div class="bg-accent-yellow h-2 rounded-full" style="width: 65%"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-bind="student.timeTaken">25:18</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-bind="student.completionDate">Oct 15, 2024</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-accent-yellow bg-opacity-20 text-accent-yellow">Needs Review</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <button class="text-google-blue hover:text-blue-600" data-event="click:viewDetails">View Details</button>
+                                </td>
+                            </tr>
+
+                            <tr data-mock="true">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <!-- Portrait of a young female student with books in a library setting -->
+                                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=150&h=150&q=80" alt="Student" class="w-8 h-8 rounded-full object-cover">
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-text-dark" data-bind="student.name">Sophia Chen</div>
+                                            <div class="text-sm text-gray-500" data-bind="student.email">sophia.c@school.edu</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <span class="text-sm font-medium text-text-dark" data-bind="student.score">45%</span>
+                                        <div class="ml-2 w-16 bg-gray-200 rounded-full h-2">
+                                            <div class="bg-warning-red h-2 rounded-full" style="width: 45%"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-bind="student.timeTaken">29:45</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-bind="student.completionDate">Oct 14, 2024</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-warning-red bg-opacity-20 text-warning-red">Failed</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <button class="text-google-blue hover:text-blue-600" data-event="click:viewDetails">View Details</button>
+                                </td>
+                            </tr>
+                            <!-- @END_MAP )) -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="px-6 py-4 border-t border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div class="text-sm text-gray-700">
+                            Showing <span class="font-medium">1</span> to <span class="font-medium">3</span> of <span class="font-medium">47</span> results
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button class="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Previous</button>
+                            <button class="px-3 py-2 bg-google-blue text-white rounded-lg text-sm font-medium">1</button>
+                            <button class="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">2</button>
+                            <button class="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question Analysis -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-text-dark">Question Performance Analysis</h3>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-6">
+                        <!-- @MAP: questionAnalysis.map(question => ( -->
+                        <div class="border border-gray-200 rounded-lg p-4" data-mock="true">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="font-medium text-text-dark" data-bind="question.text">Question 1: Which of the following is the correct way to define a function in Python?</h4>
+                                <span class="text-sm font-medium text-success-green" data-bind="question.correctPercentage">78% correct</span>
+                            </div>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="text-center">
+                                    <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
+                                        <div class="bg-success-green h-2 rounded-full" style="width: 78%"></div>
+                                    </div>
+                                    <span class="text-xs text-gray-600">A: 78%</span>
+                                </div>
+                                <div class="text-center">
+                                    <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
+                                        <div class="bg-gray-400 h-2 rounded-full" style="width: 12%"></div>
+                                    </div>
+                                    <span class="text-xs text-gray-600">B: 12%</span>
+                                </div>
+                                <div class="text-center">
+                                    <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
+                                        <div class="bg-gray-400 h-2 rounded-full" style="width: 6%"></div>
+                                    </div>
+                                    <span class="text-xs text-gray-600">C: 6%</span>
+                                </div>
+                                <div class="text-center">
+                                    <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
+                                        <div class="bg-gray-400 h-2 rounded-full" style="width: 4%"></div>
+                                    </div>
+                                    <span class="text-xs text-gray-600">D: 4%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- @END_MAP )) -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <!-- @END_COMPONENT: QuizResultsView -->
+
+    <script>
+        // TODO: Implement business logic, API calls, and state management
+        
+        // Timer functionality for quiz taking
+        (function() {
+            let timeRemaining = 12 * 60 + 45; // 12:45 in seconds
+            
+            function updateTimer() {
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+                const timerElement = document.querySelector('[data-bind="timeRemaining"]');
+                if (timerElement) {
+                    timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                }
+                
+                if (timeRemaining <= 0) {
+                    // Auto-submit quiz when time expires
+                    // TODO: Implement auto-submission logic
+                    console.log('Quiz auto-submitted due to time expiry');
+                    return;
+                }
+                
+                timeRemaining--;
+            }
+            
+            // Start timer if on quiz view
+            if (document.getElementById('student-quiz-view')) {
+                setInterval(updateTimer, 1000);
+            }
+        })();
+
+        // Navigation between views (for demo purposes)
+        (function() {
+            const views = ['dashboard', 'quiz-creation-view', 'student-quiz-view', 'quiz-results-view'];
+            
+            function showView(viewId) {
+                views.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.classList.add('hidden');
+                    }
+                });
+                
+                const targetView = document.getElementById(viewId);
+                if (targetView) {
+                    targetView.classList.remove('hidden');
+                } else {
+                    // Show main dashboard by default
+                    document.querySelector('main').style.display = 'block';
+                }
+            }
+            
+            // Add click handlers for navigation (demo purposes)
+            document.addEventListener('click', function(e) {
+                if (e.target.matches('[data-event*="createNewQuiz"]')) {
+                    showView('quiz-creation-view');
+                }
+                if (e.target.matches('[data-event*="viewAnalytics"]')) {
+                    showView('quiz-results-view');
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
