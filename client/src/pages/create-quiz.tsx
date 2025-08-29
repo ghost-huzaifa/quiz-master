@@ -62,7 +62,7 @@ export default function CreateQuiz() {
         };
         await apiRequest("POST", `/api/quizzes/${quiz.id}/questions`, questionData);
       }
-      
+
       queryClient.invalidateQueries({ queryKey: ["/api/quizzes"] });
       toast({
         title: "Success",
@@ -92,7 +92,7 @@ export default function CreateQuiz() {
 
   const handleQuizSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (questions.length === 0) {
       toast({
         title: "Error",
@@ -249,7 +249,7 @@ export default function CreateQuiz() {
                       value={quizData.totalQuestions}
                       onChange={(e) => setQuizData({ ...quizData, totalQuestions: parseInt(e.target.value) })}
                       min="1"
-                      max="50"
+                      max="100"
                       required
                     />
                   </div>
