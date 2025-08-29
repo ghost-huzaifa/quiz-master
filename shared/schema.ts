@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm';
+import { sql } from "drizzle-orm";
 import {
   index,
   jsonb,
@@ -21,12 +21,14 @@ export const sessions = pgTable(
     sess: jsonb("sess").notNull(),
     expire: timestamp("expire").notNull(),
   },
-  (table) => [index("IDX_session_expire").on(table.expire)],
+  (table) => [index("IDX_session_expire").on(table.expire)]
 );
 
 // User storage table
 export const users = pgTable("users", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   email: varchar("email").notNull().unique(),
   password: varchar("password").notNull(),
   firstName: varchar("first_name").notNull(),
@@ -37,32 +39,47 @@ export const users = pgTable("users", {
 });
 
 export const quizzes = pgTable("quizzes", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   title: varchar("title").notNull(),
   description: text("description"),
   subject: varchar("subject").notNull(),
   timeLimit: integer("time_limit").notNull(), // in minutes
   totalQuestions: integer("total_questions").notNull(),
-  createdBy: varchar("created_by").notNull().references(() => users.id),
+  createdBy: varchar("created_by")
+    .notNull()
+    .references(() => users.id),
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 export const questions = pgTable("questions", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  quizId: varchar("quiz_id").notNull().references(() => quizzes.id, { onDelete: "cascade" }),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  quizId: varchar("quiz_id")
+    .notNull()
+    .references(() => quizzes.id, { onDelete: "cascade" }),
   questionText: text("question_text").notNull(),
   options: text("options").array().notNull(), // Array of 4 options
   correctAnswer: integer("correct_answer").notNull(), // Index of correct option (0-3)
   questionNumber: integer("question_number").notNull(),
+  imageUrl: text("image_url"), // Optional image URL for the question
   createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const quizAttempts = pgTable("quiz_attempts", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  quizId: varchar("quiz_id").notNull().references(() => quizzes.id),
-  studentId: varchar("student_id").notNull().references(() => users.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  quizId: varchar("quiz_id")
+    .notNull()
+    .references(() => quizzes.id),
+  studentId: varchar("student_id")
+    .notNull()
+    .references(() => users.id),
   answers: jsonb("answers").notNull(), // { questionId: selectedOptionIndex }
   score: integer("score").notNull(),
   totalQuestions: integer("total_questions").notNull(),

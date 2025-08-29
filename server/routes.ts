@@ -1,12 +1,53 @@
 import type { Express } from "express";
+import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./auth";
+import multer from "multer";
+import path from "path";
+import { fileURLToPath } from "url";
+import fs from "fs/promises";
 import {
   insertQuizSchema,
   insertQuestionSchema,
   insertQuizAttemptSchema,
 } from "@shared/schema";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Configure multer for image uploads
+const storage_config = multer.diskStorage({
+  destination: async (req, file, cb) => {
+    const uploadDir = path.join(__dirname, "../uploads");
+    try {
+      await fs.access(uploadDir);
+    } catch {
+      await fs.mkdir(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, "question-" + uniqueSuffix + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({
+  storage: storage_config,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      const error = new Error("Only image files are allowed") as any;
+      error.code = "INVALID_FILE_TYPE";
+      cb(error, false);
+    }
+  },
+});
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Health check endpoint
@@ -20,6 +61,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Auth middleware
   setupAuth(app);
+
+  // Serve uploaded images
+  app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+
+  // Image upload endpoint
+  app.post("/api/upload/image", isAuthenticated, (req: any, res) => {
+    upload.single("image")(req, res, async (err) => {
+      try {
+        if (err) {
+          console.error("Multer error:", err);
+          if (err.code === "LIMIT_FILE_SIZE") {
+            return res
+              .status(400)
+              .json({ message: "File size too large. Maximum size is 5MB." });
+          }
+          if (err.message.includes("Only image files")) {
+            return res
+              .status(400)
+              .json({ message: "Only image files are allowed" });
+          }
+          return res
+            .status(400)
+            .json({ message: "File upload error: " + err.message });
+        }
+
+        const userId = req.user.id;
+        const user = await storage.getUser(userId);
+
+        if (user?.role !== "teacher") {
+          return res
+            .status(403)
+            .json({ message: "Only teachers can upload images" });
+        }
+
+        if (!req.file) {
+          return res.status(400).json({ message: "No image file provided" });
+        }
+
+        const imageUrl = `/uploads/${req.file.filename}`;
+        res.json({ url: imageUrl });
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        res.status(500).json({ message: "Failed to upload image" });
+      }
+    });
+  });
 
   // Quiz routes
   app.post("/api/quizzes", isAuthenticated, async (req: any, res) => {
@@ -95,11 +182,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         const quiz = await storage.getQuizById(req.params.quizId);
         if (!quiz || quiz.createdBy !== userId) {
-          return res
-            .status(403)
-            .json({
-              message: "You can only add questions to your own quizzes",
-            });
+          return res.status(403).json({
+            message: "You can only add questions to your own quizzes",
+          });
         }
 
         const questionData = insertQuestionSchema.parse({
@@ -188,11 +273,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Verify teacher owns this quiz
         const quiz = await storage.getQuizById(req.params.quizId);
         if (!quiz || quiz.createdBy !== userId) {
-          return res
-            .status(403)
-            .json({
-              message: "You can only view attempts for your own quizzes",
-            });
+          return res.status(403).json({
+            message: "You can only view attempts for your own quizzes",
+          });
         }
 
         const attempts = await storage.getAttemptsByQuizId(req.params.quizId);

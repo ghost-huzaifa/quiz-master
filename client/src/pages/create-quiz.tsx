@@ -29,6 +29,7 @@ interface QuestionData {
   options: [string, string, string, string];
   correctAnswer: number;
   questionNumber: number;
+  imageUrl?: string;
 }
 
 export default function CreateQuiz() {
@@ -129,6 +130,7 @@ export default function CreateQuiz() {
       options: ["", "", "", ""],
       correctAnswer: 0,
       questionNumber: questions.length + 1,
+      imageUrl: undefined,
     };
     setQuestions([...questions, newQuestion]);
   };

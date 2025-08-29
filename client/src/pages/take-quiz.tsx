@@ -205,6 +205,15 @@ export default function TakeQuiz() {
               <h2 className="text-2xl font-medium text-text-dark mb-4">
                 {currentQuestion.questionText}
               </h2>
+              {currentQuestion.imageUrl && (
+                <div className="mt-4 mb-6">
+                  <img
+                    src={currentQuestion.imageUrl}
+                    alt="Question illustration"
+                    className="max-w-full h-full object-contain border rounded-lg mx-auto"
+                  />
+                </div>
+              )}
             </div>
 
             {/* Answer Options */}
@@ -252,10 +261,10 @@ export default function TakeQuiz() {
                     key={index}
                     onClick={() => goToQuestion(index)}
                     className={`w-8 h-8 rounded-full text-sm font-medium ${isCurrent
-                        ? 'bg-google-blue text-white'
-                        : isAnswered
-                          ? 'bg-success-green text-white'
-                          : 'bg-gray-200 text-gray-600'
+                      ? 'bg-google-blue text-white'
+                      : isAnswered
+                        ? 'bg-success-green text-white'
+                        : 'bg-gray-200 text-gray-600'
                       }`}
                   >
                     {index + 1}
